@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>live.justratzer</groupId>
-    <artifactId>discordlink</artifactId>
+    <artifactId>minenchat</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>DiscordLink</name>
+    <name>MineNChat</name>
 
     <description>Links Discord Chat With Minecraft Chat</description>
     <properties>
