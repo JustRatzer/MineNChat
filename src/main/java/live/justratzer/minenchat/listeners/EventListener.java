@@ -18,10 +18,6 @@ public class EventListener extends ListenerAdapter {
         Channel Channel = event.getMessage().getChannel();
         Channel linkChannel = event.getGuild().getTextChannelById(main.channelId);
 
-
-
-        System.out.println();
-
         if(!user.isBot() && !event.getMessage().isWebhookMessage()) {
             if (Channel == linkChannel) {
                 main.sendDiscMessage(name, descrim, message);
