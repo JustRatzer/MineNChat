@@ -1,6 +1,8 @@
 name: MineNChat
 version: '${project.version}'
 main: live.justratzer.minenchat.main
-api-version: 1.19
+api-version: "1.20"
 authors: [ JustRatzer ]
 description: Links Discord Chat With Minecraft Chat
+commands:
+  togglediscord:

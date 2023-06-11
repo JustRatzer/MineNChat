@@ -10,16 +10,32 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.units.qual.A;
 
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public final class main extends JavaPlugin implements Listener {
 
 
+    public HashMap<UUID, PermissionAttachment> perms = new HashMap<>();
+
+    public static List<UUID> DiscordToggle = new ArrayList<UUID>();
+
+
     @Override
     public void onEnable() {
+
+        getCommand("togglediscord").setExecutor(new TogglDiscordCommand());
+
         this.saveDefaultConfig();
         Bukkit.getPluginManager().registerEvents(this, this);
         discord.main(null, this.getConfig().getString("token"));
@@ -46,13 +62,23 @@ public final class main extends JavaPlugin implements Listener {
 
     public static void sendDiscMessage(String name, String denom,String message){
         World world = Bukkit.getWorld("world");
-        Bukkit.broadcastMessage("<"+ChatColor.AQUA+"DISCORD"+" " + ChatColor.RESET +name+"#"+denom+"> "+ message);
+
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            if(DiscordToggle.contains(player.getUniqueId())) {
+                player.sendMessage("<" + ChatColor.AQUA + "DISCORD" + " " + ChatColor.RESET + name + "#" + denom + "> " + message);
+            }
+        }
     }
     private DiscordWebhook webhook = new DiscordWebhook(this.getConfig().getString("webhook"));
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) throws IOException {
         Player player = e.getPlayer();
+
+
+
+        DiscordToggle.add(player.getUniqueId());
+
         webhook.setAvatarUrl("https://visage.surgeplay.com/bust/" + player.getUniqueId());
         webhook.setUsername(player.getName());
         webhook.setContent(player.getName() + " Has joined the server");
@@ -76,6 +102,12 @@ public final class main extends JavaPlugin implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent e) throws IOException {
         Player player = e.getPlayer();
+
+
+        if(DiscordToggle.contains(player.getUniqueId())) {
+            DiscordToggle.remove(player.getUniqueId());
+        }
+
         webhook.setAvatarUrl("https://visage.surgeplay.com/bust/" + player.getUniqueId());
         webhook.setUsername(player.getName());
         webhook.setContent(player.getName() + " Has left the server");
@@ -85,19 +117,23 @@ public final class main extends JavaPlugin implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent e) throws IOException {
         Player player = e.getEntity();
-        webhook.setAvatarUrl("https://visage.surgeplay.com/bust/" + player.getUniqueId());
-        webhook.setUsername(player.getName());
-        webhook.setContent(e.getDeathMessage());
-        webhook.execute();
+        if(DiscordToggle.contains(player.getUniqueId())) {
+            webhook.setAvatarUrl("https://visage.surgeplay.com/bust/" + player.getUniqueId());
+            webhook.setUsername(player.getName());
+            webhook.setContent(e.getDeathMessage());
+            webhook.execute();
+        }
     }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) throws IOException{
         Player player = e.getPlayer();
-        webhook.setAvatarUrl("https://visage.surgeplay.com/bust/" + player.getUniqueId());
-        webhook.setUsername(player.getName());
-        webhook.setContent(e.getMessage());
-        webhook.execute();
+        if(DiscordToggle.contains(player.getUniqueId())) {
+            webhook.setAvatarUrl("https://visage.surgeplay.com/bust/" + player.getUniqueId());
+            webhook.setUsername(player.getName());
+            webhook.setContent(e.getMessage());
+            webhook.execute();
+        }
     }
     
 }
