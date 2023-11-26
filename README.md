@@ -1,5 +1,5 @@
 # MineNChat
-A Spigot plugin that lets users comunicate with a disciord server
+A Spigot plugin that lets players comunicate with a disciord server
 ## How To Use
 1. run the server with the plugin on
 2. Go into the MineNChat/config.yml file
